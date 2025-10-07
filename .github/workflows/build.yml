@@ -43,7 +43,7 @@ jobs:
         with:
           name: build-dll
           path: |
-            **/bin/Release/*.dll
+            **/bin/x86/Debug/net472/*.dll
 
       # 8. 创建 GitHub Release 并上传 DLL
       - name: Create Release
@@ -61,6 +61,6 @@ jobs:
         with:
           tag_name: v${{ env.VERSION }}
           files: |
-            **/bin/Release/*.dll
+            **/bin/x86/Debug/net472/*.dll
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
