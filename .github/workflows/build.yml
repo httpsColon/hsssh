@@ -1,0 +1,64 @@
+name: Build and Release DLL (.NET Framework 4.7.2)
+
+on:
+  push:
+    paths:
+      - 'version.txt'   # 只有修改 version.txt 时才触发
+
+jobs:
+  build:
+    runs-on: windows-latest   # .NET Framework 只能在 Windows runner 上编译
+
+    steps:
+      # 1. 拉取代码
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      # 2. 设置 MSBuild
+      - name: Setup MSBuild
+        uses: microsoft/setup-msbuild@v1
+
+      # 3. 设置 NuGet
+      - name: Setup NuGet
+        uses: NuGet/setup-nuget@v1.0.5
+
+      # 4. 还原依赖
+      - name: Restore NuGet packages
+        run: nuget restore hsssh.sln
+
+      # 5. 编译
+      - name: Build with MSBuild
+        run: msbuild hsssh.sln /p:Configuration=Release
+
+      # 6. 读取版本号
+      - name: Read version
+        id: get_version
+        run: echo "VERSION=$(Get-Content version.txt)" >> $env:GITHUB_ENV
+
+      # 7. 打包 DLL 作为构建产物
+      - name: Upload DLL artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: build-dll
+          path: |
+            **/bin/Release/*.dll
+
+      # 8. 创建 GitHub Release 并上传 DLL
+      - name: Create Release
+        uses: softprops/action-gh-release@v1
+        with:
+          tag_name: v${{ env.VERSION }}
+          name: Release v${{ env.VERSION }}
+          body: |
+            自动构建的版本 v${{ env.VERSION }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Upload DLL to Release
+        uses: softprops/action-gh-release@v1
+        with:
+          tag_name: v${{ env.VERSION }}
+          files: |
+            **/bin/Release/*.dll
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
