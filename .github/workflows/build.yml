@@ -30,7 +30,8 @@ jobs:
 
       # 5. 编译
       - name: Build with MSBuild
-        run: msbuild hsssh.sln /p:Configuration=Release
+        run: msbuild hsssh.sln /p:Configuration=Release /p:Platform="x86" /p:Version=$(Get-Content version.txt)
+        
 
       # 6. 读取版本号
       - name: Read version
