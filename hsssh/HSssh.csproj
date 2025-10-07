@@ -4,6 +4,9 @@
     <Configurations>Release;Debug</Configurations>
     <Platforms>x86</Platforms>
     <ProduceReferenceAssembly>False</ProduceReferenceAssembly>
+    <AssemblyVersion>$(Version)</AssemblyVersion>
+    <FileVersion>$(Version)</FileVersion>
+    <InformationalVersion>$(Version)</InformationalVersion>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="0Harmony">
@@ -45,4 +48,5 @@
   <!--<Target Name="PostBuild" AfterTargets="PostBuildEvent">
       <Exec Command="&#xA;" />
     </Target>-->
+
 </Project>
