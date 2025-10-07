@@ -4,6 +4,8 @@ on:
   push:
     paths:
       - 'version.txt'   # 只有修改 version.txt 时才触发
+permissions:
+  contents: write
 
 jobs:
   build:
