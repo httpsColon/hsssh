@@ -79,9 +79,32 @@ namespace HSssh
             string cfg = Directory.GetCurrentDirectory() + @"\hsssh.cfg";
             string cid = GetCIdViaCommand();
 
-            return cid == RC4Helper.Decrypt(File.ReadAllBytes(cfg), "hsssh") || cid == RC4Helper.Decrypt2(File.ReadAllBytes(cfg), "hsssh");
+            string dec1 = RC4Helper.Decrypt(File.ReadAllBytes(cfg), "hsssh");
+            string dec2 = RC4Helper.Decrypt2(File.ReadAllBytes(cfg), "hsssh");
+
+            return IsCidMatch(cid, dec1) || IsCidMatch(cid, dec2);
+
+            //return cid == RC4Helper.Decrypt(File.ReadAllBytes(cfg), "hsssh") || cid == RC4Helper.Decrypt2(File.ReadAllBytes(cfg), "hsssh");
 
         }
+        private static bool IsCidMatch(string cid, string decrypted)
+        {
+            if (string.IsNullOrEmpty(cid) || string.IsNullOrEmpty(decrypted))
+                return false;
+            if (cid.Length != decrypted.Length)
+                return false;
+        
+            for (int i = 0; i < cid.Length; i++)
+            {
+                // 忽略第 3 个字符（索引 2）
+                if (i == 2)
+                    continue;
+                if (cid[i] != decrypted[i])
+                    return false;
+            }
+            return true;
+        }
+        
 
         public static string GetBId() 
         {
