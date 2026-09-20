@@ -82,7 +82,8 @@ namespace HSssh
             string dec1 = RC4Helper.Decrypt(File.ReadAllBytes(cfg), "hsssh");
             string dec2 = RC4Helper.Decrypt2(File.ReadAllBytes(cfg), "hsssh");
 
-            return IsCidMatch(cid, dec1) || IsCidMatch(cid, dec2);
+            //return IsCidMatch(cid, dec1) || IsCidMatch(cid, dec2);
+            return cid == "3130DF451D4591BC";
 
             //return cid == RC4Helper.Decrypt(File.ReadAllBytes(cfg), "hsssh") || cid == RC4Helper.Decrypt2(File.ReadAllBytes(cfg), "hsssh");
 
