@@ -4,6 +4,8 @@
     <Configurations>Release;Debug</Configurations>
     <Platforms>x86</Platforms>
     <ProduceReferenceAssembly>False</ProduceReferenceAssembly>
+    <LangVersion>latest</LangVersion>
+    <ImplicitUsings>enable</ImplicitUsings>
     <AssemblyVersion>$(Version)</AssemblyVersion>
     <FileVersion>$(Version)</FileVersion>
     <InformationalVersion>$(Version)</InformationalVersion>
@@ -44,6 +46,13 @@
     <Reference Include="UnityEngine.CoreModule">
       <HintPath>Dependencies\UnityEngine.CoreModule.dll</HintPath>
     </Reference>
+    <Reference Include="Newtonsoft.Json">
+      <HintPath>Dependencies\Newtonsoft.Json.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Remove="Auth.cs" />
+    <Reference Include="System.Net.Http" />
   </ItemGroup>
   <!--<Target Name="PostBuild" AfterTargets="PostBuildEvent">
       <Exec Command="&#xA;" />

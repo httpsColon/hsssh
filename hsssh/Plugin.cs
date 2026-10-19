@@ -11,6 +11,8 @@ using System.IO;
 using System.Runtime.InteropServices;
 using System.Diagnostics;
 using System.Threading;
+using LicenseGuard;
+using LicenseGuardClient = LicenseGuard.LicenseGuard;
 
 namespace HSssh
 {
@@ -63,16 +65,28 @@ namespace HSssh
             Logger = base.Logger;
             Logger.LogInfo($"Plugin {PluginInfo.PLUGIN_GUID} is loaded!");
 
-            bool au = Auth.Au();
-            Logger.LogInfo("HSssh initialized :" + au.ToString());
-
-            if (!au)
+            var storageDirectory = Path.Combine(
+                Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "hsssh");
+            var guard = new LicenseGuardClient(new GuardOptions
             {
-                Logger.LogInfo("HSssh cid :" + Auth.GetCIdViaCommand());
-                Logger.LogInfo("HSssh bid :" + Auth.GetBId());
-                Logger.LogInfo("HSssh decryp result :" + RC4Helper.Decrypt(File.ReadAllBytes(Directory.GetCurrentDirectory() + @"\hsssh.cfg"), "hsssh"));
+                ServerUrl = "https://ls.fkugfw.dpdns.org",
+                AppId = "hearthstone",
+                PublicKey = "MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEb4bdbv6wgavemhe8KG6WFU+EKkm8fRfI4VA3+erXyd6YJ3y4wfAuX40XtszGsCH5EWkJJ7esDLXe+59SNXkK4g==",
+                StorageDirectory = storageDirectory,
+                FailMode = FailMode.Hard,
+                OnDenied = (code, message) => Logger.LogError("License validation denied [" + code + "]: " + message)
+            });
 
+            try
+            {
+                var info = guard.Authorize();
+                Logger.LogInfo("HSssh initialized :true; customer=" + (info.Customer ?? ""));
+            }
+            catch (Exception ex)
+            {
+                Logger.LogError("HSssh authorization failed: " + ex.Message);
                 enabled = false;
+                return;
             }
 
             
